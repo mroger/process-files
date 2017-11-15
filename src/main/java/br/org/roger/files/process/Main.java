@@ -43,8 +43,8 @@ public class Main {
 	private static final int ONE_LINE = 1;
 	private static final String HTTP_METHOD_POST = "POST";
 	private static final String API_ENDPOINT = "https://localhost:8080/inbox";
-    private static final int TIMEOUT = 2000;
-	
+	private static final int TIMEOUT = 2000;
+
 	private final String filesPath;
 	private boolean encryptEnabled;
 	private boolean hasHeader;
@@ -150,17 +150,17 @@ public class Main {
 			return Optional.of(jsonToSend);
 		}
 		final String aesKey = "super-secret-key";
-        SecretKey secretKey = new SecretKeySpec(aesKey.getBytes(), "AES");
+		SecretKey secretKey = new SecretKeySpec(aesKey.getBytes(), "AES");
 
-        Cipher aes;
+		Cipher aes;
 		try {
 			aes = Cipher.getInstance("AES/CBC/PKCS5Padding");
-			
-	        aes.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(new byte[16]));
-	        byte[] ciphertext = aes.doFinal(jsonToSend.getBytes());
 
-	        String encrypted = Base64.getEncoder().encodeToString(ciphertext);
-	        return Optional.of(encrypted);
+			aes.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(new byte[16]));
+			byte[] ciphertext = aes.doFinal(jsonToSend.getBytes());
+
+			String encrypted = Base64.getEncoder().encodeToString(ciphertext);
+			return Optional.of(encrypted);
 		} catch (Exception e) {
 			LOGGER.error("Error encrypting Json payload", e);
 			return Optional.empty();
@@ -179,28 +179,26 @@ public class Main {
 			URL url = new URL(this.endpointUrl);
 
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setDoOutput(true);
-            urlConnection.setConnectTimeout(TIMEOUT);
-            urlConnection.setRequestMethod(HTTP_METHOD_POST);
-            
-            try(
-            	OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-            	InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            	BufferedReader r = new BufferedReader(new InputStreamReader(in));
-            ) {
+			urlConnection.setDoOutput(true);
+			urlConnection.setConnectTimeout(TIMEOUT);
+			urlConnection.setRequestMethod(HTTP_METHOD_POST);
 
-	            out.write(jsonToSend.getBytes());
-	
-	            String line;
-	            StringBuilder sb = new StringBuilder();
-	            while ((line = r.readLine()) != null) {
-	                sb.append(line).append('\n');
-	            }
-	
-	            LOGGER.info("Data sent to the endpoint!");
-            } catch (Exception e) {
-    			LOGGER.error("Error! It's not possible to send data to the server.", e);
-    		}
+			try (OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+					InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+					BufferedReader r = new BufferedReader(new InputStreamReader(in));) {
+
+				out.write(jsonToSend.getBytes());
+
+				String line;
+				StringBuilder sb = new StringBuilder();
+				while ((line = r.readLine()) != null) {
+					sb.append(line).append('\n');
+				}
+
+				LOGGER.info("Data sent to the endpoint!");
+			} catch (Exception e) {
+				LOGGER.error("Error! It's not possible to send data to the server.", e);
+			}
 		} catch (Exception e) {
 			LOGGER.error("Error! It's not possible to connect to the server.", e);
 		}

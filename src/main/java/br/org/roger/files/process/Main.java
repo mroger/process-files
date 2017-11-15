@@ -91,7 +91,7 @@ public class Main {
 				.peek(System.out::println)
 				.forEach(this::postMessage);
 			System.exit(0);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOGGER.error("Error listing files from path.", e);
 			System.exit(1);
 		}

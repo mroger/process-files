@@ -2,41 +2,50 @@ package br.org.roger.files.process;
 
 public class AnotherObject {
 
-	private String value1;
-	private int value2;
-	private int value3;
-	private int value4;
-	private int value5;
+	private String hash;
+	private String timestamp;
+	private String latitude;
+	private String longitude;
+	private String city;
+	private String lastLatitude = "";
+	private String lastLongitude = "";
 
 	public AnotherObject(
-			String stringCellValue, double numericCellValue, double numericCellValue2,
-			double numericCellValue3, double numericCellValue4) {
-		this.value1 = stringCellValue;
-		this.value2 = Double.valueOf(numericCellValue).intValue();
-		this.value3 = Double.valueOf(numericCellValue2).intValue();
-		this.value4 = Double.valueOf(numericCellValue3).intValue();
-		this.value5 = Double.valueOf(numericCellValue4).intValue();
+			String hash, String timestamp, String latitude,
+			String longitude, String city) {
+		this.hash = hash;
+		this.timestamp = timestamp;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.city = city;
 	}
 
-	public String getValue1() {
-		return value1;
+	public String getHash() {
+		return hash;
 	}
 
-	public int getValue2() {
-		return value2;
+	public String getTimestamp() {
+		return timestamp;
 	}
 
-	public int getValue3() {
-		return value3;
+	public String getLatitude() {
+		return latitude;
 	}
 
-	public int getValue4() {
-		return value4;
+	public String getLongitude() {
+		return longitude;
 	}
 
-	public int getValue5() {
-		return value5;
+	public String getCity() {
+		return city;
 	}
 
-	
+	public String getLastLatitude() {
+		return lastLatitude;
+	}
+
+	public String getLastLongitude() {
+		return lastLongitude;
+	}
+
 }

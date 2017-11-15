@@ -59,21 +59,12 @@ public class Main {
 				+ " filesPath [encryptEnabled(true|false)] [hasHeader(true|false]");
 		}
 		
-		String filesPath = args[0];
-		String encryptEnabled = "false";
-		String hasHeader = "true";
-		String postToEndpoint = "false";
-		if (args.length > 1) {
-			encryptEnabled = args[1];
-		}
-		if (args.length > 2) {
-			hasHeader = args[2];
-		}
-		if (args.length > 3) {
-			postToEndpoint = args[3];
-		}
-		
-		Main main = new Main(filesPath, encryptEnabled, hasHeader, postToEndpoint);
+		Main main = new Main.MainBuilder(args)
+			.withFilesPath()
+			.withEncryptEnabled()
+			.withHasHeader()
+			.withPostToEndpoint()
+			.build();
 		main.processFiles();
 		
 	}
@@ -84,6 +75,13 @@ public class Main {
 		this.encryptEnabled = Boolean.valueOf(encryptEnabled);
 		this.hasHeader = Boolean.valueOf(hasHeader);
 		this.postToEndpoint = Boolean.valueOf(postToEndpoint);
+	}
+	
+	public Main(final MainBuilder builder) {
+		this.filesPath = builder.getFilesPath();
+		this.encryptEnabled = builder.encryptEnabled();
+		this.hasHeader = builder.hasHeader();
+		this.postToEndpoint = builder.postToEndpoint();
 	}
 	
 	private void processFiles() {
@@ -208,6 +206,66 @@ public class Main {
 		} catch (Exception e) {
 			LOGGER.error("Error! It's not possible to connect to the server.", e);
 		}
+	}
+	
+	private static class MainBuilder {
+		private String[] args;
+		private String filesPath;
+		private boolean encryptEnabled = false;
+		private boolean hasHeader = true;
+		private boolean postToEndpoint = false;
+		
+		public MainBuilder(String[] args) {
+			this.args = args;
+		}
+		
+		public MainBuilder withFilesPath() {
+			this.filesPath = args[0];
+			return this;
+		}
+		
+		public MainBuilder withEncryptEnabled() {
+			if (args.length > 1) {
+				this.encryptEnabled = Boolean.valueOf(args[1]);
+			}
+			return this;
+		}
+		
+		public MainBuilder withHasHeader() {
+			if (args.length > 2) {
+				this.hasHeader = Boolean.valueOf(args[2]);
+			}
+			return this;
+		}
+		
+		public MainBuilder withPostToEndpoint() {
+			if (args.length > 3) {
+				this.postToEndpoint = Boolean.valueOf(args[3]);
+			}
+			return this;
+		}
+		
+		public Main build() {
+			return new Main(this);
+		}
+
+		public String getFilesPath() {
+			return filesPath;
+		}
+
+		public boolean encryptEnabled() {
+			return encryptEnabled;
+		}
+
+		public boolean hasHeader() {
+			return hasHeader;
+		}
+
+		public boolean postToEndpoint() {
+			return postToEndpoint;
+		}
+		
+		
 	}
 
 }

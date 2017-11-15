@@ -107,9 +107,10 @@ public class Main {
 	
 	private Stream<Row> extractRowsFromFile(final File mobileFile) {
 		int skipLines = hasHeader ? ONE_LINE : NO_LINE;
+		boolean isParallel = false;
 		try(XSSFWorkbook workbook = new XSSFWorkbook(mobileFile)) {
 			XSSFSheet spreadsheet = workbook.getSheetAt(0);
-			return StreamSupport.stream(spreadsheet.spliterator(), false)
+			return StreamSupport.stream(spreadsheet.spliterator(), isParallel)
 				.skip(skipLines);
 		} catch (InvalidFormatException | IOException e) {
 			LOGGER.error("Error processing file " + mobileFile.getAbsolutePath(), e);

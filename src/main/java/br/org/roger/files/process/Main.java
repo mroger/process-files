@@ -53,7 +53,6 @@ public class Main {
 	
 	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
-	// TODO parametrizar se o arquivo possui header
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
 			System.err.println("Usage: java -jar process-files.jar"

@@ -97,7 +97,7 @@ public class Main {
 				.map(this::convertToJson)
 				.map(this::encryptJson)
 				.filter(this::isNonEmptyData)
-				.map(Optional::get)
+				.map(this::getNonEmptyData)
 				.peek(System.out::println)
 				.forEach(this::postMessage);
 		} catch (IOException e) {
@@ -169,6 +169,10 @@ public class Main {
 	
 	private boolean isNonEmptyData(Optional<String> checkingData) {
 		return checkingData.isPresent();
+	}
+	
+	private String getNonEmptyData(Optional<String> nonEmptyData) {
+		return nonEmptyData.get();
 	}
 	
 	private void postMessage(final String jsonToSend) {

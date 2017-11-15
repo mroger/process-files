@@ -33,9 +33,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import com.google.gson.Gson;
 
 /**
- * This class is responsible for 
  * 
- * @author user
+ * @author marcos
  *
  */
 public class Main {
@@ -49,6 +48,7 @@ public class Main {
 	private final String filesPath;
 	private boolean encryptEnabled;
 	private boolean hasHeader;
+	private boolean postToEndpoint;
 	private String endpointUrl = API_ENDPOINT;
 	
 	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
@@ -62,23 +62,29 @@ public class Main {
 		
 		String filesPath = args[0];
 		String encryptEnabled = "false";
-		String hasHeader = "false";
+		String hasHeader = "true";
+		String postToEndpoint = "false";
 		if (args.length > 1) {
 			encryptEnabled = args[1];
 		}
 		if (args.length > 2) {
 			hasHeader = args[2];
 		}
+		if (args.length > 3) {
+			postToEndpoint = args[3];
+		}
 		
-		Main main = new Main(filesPath, encryptEnabled, hasHeader);
+		Main main = new Main(filesPath, encryptEnabled, hasHeader, postToEndpoint);
 		main.processFiles();
 		
 	}
 	
-	public Main(final String filesPath, final String encryptEnabled, final String hasHeader) {
+	public Main(final String filesPath, final String encryptEnabled,
+			final String hasHeader, final String postToEndpoint) {
 		this.filesPath = filesPath;
 		this.encryptEnabled = Boolean.valueOf(encryptEnabled);
 		this.hasHeader = Boolean.valueOf(hasHeader);
+		this.postToEndpoint = Boolean.valueOf(postToEndpoint);
 	}
 	
 	private void processFiles() {
@@ -91,10 +97,10 @@ public class Main {
 				.map(this::mapToDomain)
 				.map(this::convertToJson)
 				.map(this::encryptJson)
-				.filter(Optional::isPresent)
+				.filter(this::isNonEmptyData)
 				.map(Optional::get)
-				//.forEach(this::postMessage);
-				.forEach(System.out::println);
+				.peek(System.out::println)
+				.forEach(this::postMessage);
 		} catch (IOException e) {
 			LOGGER.error("Error listing files from path.", e);
 		}
@@ -112,8 +118,8 @@ public class Main {
 		}
 	}
 
-	private AnotherObject mapToDomain(final Row row) {
-		return new AnotherObject(
+	private DomainObject mapToDomain(final Row row) {
+		return new DomainObject(
 			getCheckedValue(row.getCell(0)),
 			getCheckedValue(row.getCell(1)),
 			getCheckedValue(row.getCell(2)),
@@ -135,7 +141,7 @@ public class Main {
 		}
 	}
 	
-	private String convertToJson(final AnotherObject mobileData) {
+	private String convertToJson(final DomainObject mobileData) {
 		return new Gson().toJson(mobileData);
 	}
 	
@@ -161,33 +167,42 @@ public class Main {
 		}
 	}
 	
+	private boolean isNonEmptyData(Optional<String> checkingData) {
+		return checkingData.isPresent();
+	}
+	
 	private void postMessage(final String jsonToSend) {
+		if (!postToEndpoint) {
+			return;
+		}
 		try {
 			URL url = new URL(this.endpointUrl);
-			HttpURLConnection urlConnection = null;
 
-            urlConnection = (HttpURLConnection) url.openConnection();
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setDoOutput(true);
             urlConnection.setConnectTimeout(TIMEOUT);
             urlConnection.setRequestMethod(HTTP_METHOD_POST);
+            
+            try(
+            	OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
+            	InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+            	BufferedReader r = new BufferedReader(new InputStreamReader(in));
+            ) {
 
-            OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-            out.write(jsonToSend.getBytes());
-            out.close();
-
-            InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-            BufferedReader r = new BufferedReader(new InputStreamReader(in));
-            String line;
-            StringBuilder sb = new StringBuilder();
-            while ((line = r.readLine()) != null) {
-                sb.append(line).append('\n');
-            }
-
-            //close the reader
-            r.close();
-            LOGGER.info("Data sent to the endpoint!");
+	            out.write(jsonToSend.getBytes());
+	
+	            String line;
+	            StringBuilder sb = new StringBuilder();
+	            while ((line = r.readLine()) != null) {
+	                sb.append(line).append('\n');
+	            }
+	
+	            LOGGER.info("Data sent to the endpoint!");
+            } catch (Exception e) {
+    			LOGGER.error("Error! It's not possible to send data to the server.", e);
+    		}
 		} catch (Exception e) {
-			LOGGER.error("We can't send data to server, something wrong happened :(", e);
+			LOGGER.error("Error! It's not possible to connect to the server.", e);
 		}
 	}
 

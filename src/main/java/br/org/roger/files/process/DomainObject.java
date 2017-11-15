@@ -1,6 +1,6 @@
 package br.org.roger.files.process;
 
-public class AnotherObject {
+public class DomainObject {
 
 	private String hash;
 	private String timestamp;
@@ -10,7 +10,7 @@ public class AnotherObject {
 	private String lastLatitude = "";
 	private String lastLongitude = "";
 
-	public AnotherObject(
+	public DomainObject(
 			String hash, String timestamp, String latitude,
 			String longitude, String city) {
 		this.hash = hash;

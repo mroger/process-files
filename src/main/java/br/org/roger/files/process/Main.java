@@ -52,6 +52,13 @@ public class Main {
 	private String endpointUrl = API_ENDPOINT;
 	
 	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
+	
+	public Main(final MainBuilder builder) {
+		this.filesPath = builder.getFilesPath();
+		this.encryptEnabled = builder.encryptEnabled();
+		this.hasHeader = builder.hasHeader();
+		this.postToEndpoint = builder.postToEndpoint();
+	}
 
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
@@ -67,13 +74,6 @@ public class Main {
 			.build();
 		main.processFiles();
 		
-	}
-	
-	public Main(final MainBuilder builder) {
-		this.filesPath = builder.getFilesPath();
-		this.encryptEnabled = builder.encryptEnabled();
-		this.hasHeader = builder.hasHeader();
-		this.postToEndpoint = builder.postToEndpoint();
 	}
 	
 	private void processFiles() {

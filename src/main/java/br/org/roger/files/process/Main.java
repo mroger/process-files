@@ -69,14 +69,6 @@ public class Main {
 		
 	}
 	
-	public Main(final String filesPath, final String encryptEnabled,
-			final String hasHeader, final String postToEndpoint) {
-		this.filesPath = filesPath;
-		this.encryptEnabled = Boolean.valueOf(encryptEnabled);
-		this.hasHeader = Boolean.valueOf(hasHeader);
-		this.postToEndpoint = Boolean.valueOf(postToEndpoint);
-	}
-	
 	public Main(final MainBuilder builder) {
 		this.filesPath = builder.getFilesPath();
 		this.encryptEnabled = builder.encryptEnabled();

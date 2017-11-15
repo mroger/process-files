@@ -88,8 +88,8 @@ public class Main {
 	
 	private void processFiles() {
 		Path inputFilesDir = Paths.get(this.filesPath);
-		try {
-			Files.list(inputFilesDir)
+		try (Stream<Path> files = Files.list(inputFilesDir)) {
+			files
 				.filter(Files::isRegularFile)
 				.map(Path::toFile)
 				.flatMap(this::extractRowsFromFile)

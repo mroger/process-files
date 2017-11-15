@@ -100,20 +100,22 @@ public class Main {
 				.map(this::getNonEmptyData)
 				.peek(System.out::println)
 				.forEach(this::postMessage);
+			System.exit(0);
 		} catch (IOException e) {
 			LOGGER.error("Error listing files from path.", e);
+			System.exit(1);
 		}
 	}
 	
-	private Stream<Row> extractRowsFromFile(final File mobileFile) {
+	private Stream<Row> extractRowsFromFile(final File inputFile) {
 		int skipLines = hasHeader ? ONE_LINE : NO_LINE;
 		boolean isParallel = false;
-		try(XSSFWorkbook workbook = new XSSFWorkbook(mobileFile)) {
+		try(XSSFWorkbook workbook = new XSSFWorkbook(inputFile)) {
 			XSSFSheet spreadsheet = workbook.getSheetAt(0);
 			return StreamSupport.stream(spreadsheet.spliterator(), isParallel)
 				.skip(skipLines);
 		} catch (InvalidFormatException | IOException e) {
-			LOGGER.error("Error processing file " + mobileFile.getAbsolutePath(), e);
+			LOGGER.error("Error processing file " + inputFile.getAbsolutePath(), e);
 			return Stream.empty();
 		}
 	}

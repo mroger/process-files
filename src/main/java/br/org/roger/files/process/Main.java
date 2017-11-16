@@ -55,7 +55,7 @@ public class Main {
 	
 	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 	
-	public Main(final MainBuilder builder) {
+	private Main(final MainBuilder builder) {
 		this.filesPath = builder.getFilesPath();
 		this.encryptEnabled = builder.encryptEnabled();
 		this.hasHeader = builder.hasHeader();

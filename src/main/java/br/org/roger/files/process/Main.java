@@ -14,7 +14,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -84,6 +86,8 @@ public class Main {
 				.map(Path::toFile)
 				.flatMap(this::extractRowsFromFile)
 				.map(this::mapToDomain)
+				.collect(Collectors.groupingBy(DomainObject::getHash, Collectors.toList())).values().stream()
+				.flatMap(this::calculateLastCoordinates)
 				.map(this::convertToJson)
 				.map(this::encryptJson)
 				.filter(this::isNonEmptyData)
@@ -117,6 +121,24 @@ public class Main {
 			getCheckedValue(row.getCell(2)),
 			getCheckedValue(row.getCell(3)),
 			getCheckedValue(row.getCell(4)));
+	}
+	
+	private Stream<DomainObject> calculateLastCoordinates(final List<DomainObject> domainValue) {
+		for (int i = 0; i < domainValue.size(); i++) {
+			DomainObject domain = domainValue.get(i);
+			if (isFirstElement(i)) {
+				domain.copyLastLatitudeFromLatitude();
+				domain.copyLastLongitudeFromLongitude();
+			} else {
+				domain.setLastLatitude(domainValue.get(i - 1).getLatitude());
+				domain.setLastLongitude(domainValue.get(i - 1).getLongitude());
+			}
+		}
+		return domainValue.stream();
+	}
+
+	private boolean isFirstElement(int i) {
+		return i == 0;
 	}
 
 	private String getCheckedValue(Cell cell) {

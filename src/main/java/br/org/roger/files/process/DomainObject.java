@@ -47,5 +47,28 @@ public class DomainObject {
 	public String getLastLongitude() {
 		return lastLongitude;
 	}
+	
+	public void setLastLatitude(String lastLatitude) {
+		this.lastLatitude = lastLatitude;
+	}
 
+	public void setLastLongitude(String lastLongitude) {
+		this.lastLongitude = lastLongitude;
+	}
+	
+	public void copyLastLatitudeFromLatitude() {
+		this.lastLatitude = latitude;
+	}
+
+	public void copyLastLongitudeFromLongitude() {
+		this.lastLongitude = longitude;
+	}
+
+	@Override
+	public String toString() {
+		return "DomainObject [hash=" + hash + ", timestamp=" + timestamp + ", latitude=" + latitude + ", longitude="
+				+ longitude + ", city=" + city + ", lastLatitude=" + lastLatitude + ", lastLongitude=" + lastLongitude
+				+ "]";
+	}
+	
 }

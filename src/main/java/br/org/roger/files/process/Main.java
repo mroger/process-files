@@ -90,7 +90,7 @@ public class Main {
 				.lines()
 				.map(this::toArray)
 				.map(this::mapToDomain)
-				.peek(t -> { if (t.getLatitude().equals("-19.4752309")) { throw new RuntimeException("Erro na linha"); } })
+				//.peek(t -> { if (t.getLatitude().equals("-19.4752309")) { throw new RuntimeException("Erro na linha"); } })
 				.collect(Collectors.toList()).stream();
 		} catch (Exception e) {
 			LOGGER.error("Error processing file " + mobileFile.getAbsolutePath(), e);

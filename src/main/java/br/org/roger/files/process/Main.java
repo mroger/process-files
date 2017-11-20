@@ -79,8 +79,8 @@ public class Main {
 		}
 	}
 
-	private Stream<DomainObject> calculateLastCoordinates(final List<DomainObject> domainValue) {
-		return DomainObject.calculateLastCoordinates(domainValue).stream();
+	private Stream<DomainObject> calculateLastCoordinates(final List<DomainObject> domainValues) {
+		return DomainObject.calculateLastCoordinates(domainValues).stream();
 	}
 
 	private String convertToJson(final DomainObject mobileData) {

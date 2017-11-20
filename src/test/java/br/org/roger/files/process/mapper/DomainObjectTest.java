@@ -3,6 +3,7 @@ package br.org.roger.files.process.mapper;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -37,7 +38,7 @@ public class DomainObjectTest {
 	}
 	
 	@Test
-	public void shouldCalculateLastCoordinates_multipleItem() {
+	public void shouldCalculateLastCoordinates_multipleItems() {
 		
 		List<DomainObject> multipleItemsList = DomainObjectTestFixture.getMultipleItemsList();
 		
@@ -48,6 +49,28 @@ public class DomainObjectTest {
 		assertThat(firstDomainObject.getLastLatitude(), equalTo(firstDomainObject.getLatitude()));
 		assertThat(firstDomainObject.getLastLongitude(), equalTo(firstDomainObject.getLongitude()));
 		
+	}
+	
+	@Test
+	public void shouldPreserveOriginalDomain_multipleItems() throws CloneNotSupportedException {
+		
+		List<DomainObject> multipleItemsList = DomainObjectTestFixture.getMultipleItemsList();
+		List<DomainObject> originalDomains = getClonesFor(multipleItemsList);
+		
+		DomainObject.calculateLastCoordinates(multipleItemsList);
+		
+		for (int i = 0; i < multipleItemsList.size(); i++) {
+			assertThat(multipleItemsList.get(i), equalTo(originalDomains.get(i)));			
+		}
+		
+	}
+
+	private List<DomainObject> getClonesFor(List<DomainObject> multipleItemsList) throws CloneNotSupportedException {
+		List<DomainObject> clonedDomains = new ArrayList<>();
+		for (DomainObject domain : multipleItemsList) {
+			clonedDomains.add((DomainObject) domain.clone());
+		}
+		return clonedDomains;
 	}
 
 }

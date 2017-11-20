@@ -1,4 +1,6 @@
-package br.org.roger.files.process;
+package br.org.roger.files.process.mapper;
+
+import java.util.List;
 
 public class DomainObject {
 
@@ -18,6 +20,24 @@ public class DomainObject {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.city = city;
+	}
+
+	public static List<DomainObject> calculateLastCoordinates(final List<DomainObject> domainValue) {
+		for (int i = 0; i < domainValue.size(); i++) {
+			DomainObject domain = domainValue.get(i);
+			if (isFirstElement(i)) {
+				domain.copyLastLatitudeFromLatitude();
+				domain.copyLastLongitudeFromLongitude();
+			} else {
+				domain.setLastLatitude(domainValue.get(i - 1).getLatitude());
+				domain.setLastLongitude(domainValue.get(i - 1).getLongitude());
+			}
+		}
+		return domainValue;
+	}
+
+	private static boolean isFirstElement(int i) {
+		return i == 0;
 	}
 
 	public String getHash() {

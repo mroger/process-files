@@ -12,30 +12,30 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class XSSDomainMapper implements ModelMapper<DomainObject> {
+public class XSSDomainMapper implements ModelMapper<String[]> {
 	
 	private static final Logger LOGGER = Logger.getLogger(XSSDomainMapper.class.getName());
 	private static final boolean SEQUENTIAL_STREAM = false;
 
-	public Stream<DomainObject> streamFromFile(final File inputFile) {
+	public Stream<String[]> streamFromFile(final File inputFile) {
 		try(XSSFWorkbook workbook = new XSSFWorkbook(inputFile)) {
 			XSSFSheet spreadsheet = workbook.getSheetAt(0);
 			return StreamSupport
 				.stream(spreadsheet.spliterator(), SEQUENTIAL_STREAM)
-				.map(this::mapToDomain);
+				.map(this::mapToArray);
 		} catch (InvalidFormatException | IOException e) {
 			LOGGER.error("Error processing file " + inputFile.getAbsolutePath(), e);
 			return Stream.empty();
 		}
 	}
 
-	private DomainObject mapToDomain(final Row row) {
-		return new DomainObject(
+	private String[] mapToArray(final Row row) {
+		return new String[] {
 			getCheckedValue(row.getCell(0)),
 			getCheckedValue(row.getCell(1)),
 			getCheckedValue(row.getCell(2)),
 			getCheckedValue(row.getCell(3)),
-			getCheckedValue(row.getCell(4)));
+			getCheckedValue(row.getCell(4))};
 	}
 
 	private String getCheckedValue(Cell cell) {

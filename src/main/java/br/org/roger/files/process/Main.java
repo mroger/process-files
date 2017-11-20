@@ -4,10 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
@@ -15,7 +12,7 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 
 import br.org.roger.files.process.crypto.Crypto;
-import br.org.roger.files.process.mapper.DomainObject;
+import br.org.roger.files.process.mapper.ModelMapper;
 import br.org.roger.files.process.mapper.XSSDomainMapper;
 import br.org.roger.files.process.parameter.AppParameter;
 import br.org.roger.files.process.parameter.AppParameterException;
@@ -29,14 +26,14 @@ import br.org.roger.files.process.parameter.AppParameterMissingException;
 public class Main {
 	
 	private AppParameter appParameter;
-	private XSSDomainMapper xssDomainMapper;
+	private ModelMapper<String[]> modelMapper;
 	private Crypto crypto;
 	
 	private static final Logger LOGGER = Logger.getLogger(Main.class.getName());
 
 	private Main(final String[] args) {
 		this.appParameter = new AppParameter(args);
-		this.xssDomainMapper = new XSSDomainMapper();
+		this.modelMapper = new XSSDomainMapper();
 		this.crypto = new Crypto(appParameter.encryptEnabled());
 	}
 
@@ -59,11 +56,7 @@ public class Main {
 			Stream<String> outputLines = files
 				.filter(Files::isRegularFile)
 				.map(Path::toFile)
-				.flatMap(xssDomainMapper::streamFromFile)
-				.collect(Collectors.groupingBy(DomainObject::getHash, Collectors.toList()))
-					.values()
-					.stream()
-				.flatMap(this::calculateLastCoordinates)
+				.flatMap(modelMapper::streamFromFile)
 				.map(this::convertToJson)
 				.map(this::encryptJson)
 				.filter(this::isNonEmptyData)
@@ -80,12 +73,7 @@ public class Main {
 		}
 	}
 
-	private Stream<DomainObject> calculateLastCoordinates(final List<DomainObject> domainValues) {
-		return DomainObject.calculateLastCoordinates(
-				Collections.unmodifiableList(domainValues)).stream();
-	}
-
-	private String convertToJson(final DomainObject mobileData) {
+	private String convertToJson(final String[] mobileData) {
 		return new Gson().toJson(mobileData);
 	}
 	

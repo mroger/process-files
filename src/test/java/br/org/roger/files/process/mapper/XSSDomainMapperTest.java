@@ -27,12 +27,12 @@ public class XSSDomainMapperTest {
 	@Test
 	public void shouldCreateStreamOfDomainFromFile() {
 		
-		List<DomainObject> fileItemsFixture = DomainObjectTestFixture.getFileItemsFixture();
+		List<String[]> fileItemsFixture = DomainObjectTestFixture.getFileItemsFixture();
 		XSSDomainMapper mapper = new XSSDomainMapper();
 
-		Stream<DomainObject> stream = mapper.streamFromFile(this.path.toFile());
+		Stream<String[]> stream = mapper.streamFromFile(this.path.toFile());
 		
-		List<DomainObject> domainObjects = stream.collect(Collectors.toList());
+		List<String[]> domainObjects = stream.collect(Collectors.toList());
 		MatcherAssert.assertThat(domainObjects.size(), Matchers.equalTo(7));
 		
 		for (int i = 0; i < fileItemsFixture.size(); i++) {

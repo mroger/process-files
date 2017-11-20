@@ -12,12 +12,12 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-public class XSSDomainMapper {
+public class XSSDomainMapper implements ModelMapper<DomainObject> {
 	
 	private static final Logger LOGGER = Logger.getLogger(XSSDomainMapper.class.getName());
 	private static final boolean SEQUENTIAL_STREAM = false;
 
-	public Stream<DomainObject> streamOfDomainFromFile(final File inputFile) {
+	public Stream<DomainObject> streamFromFile(final File inputFile) {
 		try(XSSFWorkbook workbook = new XSSFWorkbook(inputFile)) {
 			XSSFSheet spreadsheet = workbook.getSheetAt(0);
 			return StreamSupport

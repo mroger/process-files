@@ -59,7 +59,7 @@ public class Main {
 			Stream<String> outputLines = files
 				.filter(Files::isRegularFile)
 				.map(Path::toFile)
-				.flatMap(xssDomainMapper::streamOfDomainFromFile)
+				.flatMap(xssDomainMapper::streamFromFile)
 				.collect(Collectors.groupingBy(DomainObject::getHash, Collectors.toList()))
 					.values()
 					.stream()

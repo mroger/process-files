@@ -30,7 +30,7 @@ public class XSSDomainMapperTest {
 		List<DomainObject> fileItemsFixture = DomainObjectTestFixture.getFileItemsFixture();
 		XSSDomainMapper mapper = new XSSDomainMapper();
 
-		Stream<DomainObject> stream = mapper.streamOfDomainFromFile(this.path.toFile());
+		Stream<DomainObject> stream = mapper.streamFromFile(this.path.toFile());
 		
 		List<DomainObject> domainObjects = stream.collect(Collectors.toList());
 		MatcherAssert.assertThat(domainObjects.size(), Matchers.equalTo(7));

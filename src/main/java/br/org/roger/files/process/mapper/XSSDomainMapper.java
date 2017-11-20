@@ -15,13 +15,13 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public class XSSDomainMapper {
 	
 	private static final Logger LOGGER = Logger.getLogger(XSSDomainMapper.class.getName());
+	private static final boolean SEQUENTIAL_STREAM = false;
 
 	public Stream<DomainObject> streamOfDomainFromFile(final File inputFile) {
-		boolean isParallel = false;
 		try(XSSFWorkbook workbook = new XSSFWorkbook(inputFile)) {
 			XSSFSheet spreadsheet = workbook.getSheetAt(0);
 			return StreamSupport
-				.stream(spreadsheet.spliterator(), isParallel)
+				.stream(spreadsheet.spliterator(), SEQUENTIAL_STREAM)
 				.map(this::mapToDomain);
 		} catch (InvalidFormatException | IOException e) {
 			LOGGER.error("Error processing file " + inputFile.getAbsolutePath(), e);

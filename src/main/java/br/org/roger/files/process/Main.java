@@ -55,7 +55,7 @@ public class Main {
 		long start = System.currentTimeMillis();
 		
 		Path inputFilesDir = Paths.get(this.appParameter.getInputPath());
-		try (Stream<Path> files = Files.list(inputFilesDir)) {
+		try (Stream<Path> files = Files.walk(inputFilesDir)) {
 			Stream<String> outputLines = files
 				.filter(Files::isRegularFile)
 				.map(Path::toFile)

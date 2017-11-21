@@ -12,8 +12,8 @@ import org.apache.log4j.Logger;
 import com.google.gson.Gson;
 
 import br.org.roger.files.process.crypto.Crypto;
+import br.org.roger.files.process.mapper.MapperFactory;
 import br.org.roger.files.process.mapper.ModelMapper;
-import br.org.roger.files.process.mapper.XSSDomainMapper;
 import br.org.roger.files.process.parameter.AppParameter;
 import br.org.roger.files.process.parameter.AppParameterException;
 import br.org.roger.files.process.parameter.AppParameterMissingException;
@@ -33,7 +33,8 @@ public class Main {
 
 	private Main(final String[] args) {
 		this.appParameter = new AppParameter(args);
-		this.modelMapper = new XSSDomainMapper();
+		//this.modelMapper = MapperFactory.createMapper(MapperFactory.FileType.EXCEL);
+		this.modelMapper = MapperFactory.createMapper(MapperFactory.FileType.TEXT);
 		this.crypto = new Crypto(appParameter.encryptEnabled());
 	}
 
@@ -51,6 +52,8 @@ public class Main {
 	}
 	
 	private void processFiles() {
+		long start = System.currentTimeMillis();
+		
 		Path inputFilesDir = Paths.get(this.appParameter.getInputPath());
 		try (Stream<Path> files = Files.list(inputFilesDir)) {
 			Stream<String> outputLines = files
@@ -64,7 +67,9 @@ public class Main {
 			
 			Files.write(this.appParameter.getOutputFilePath(), (Iterable<String>) outputLines::iterator);
 			
-			LOGGER.info("Files successfuly processed.");
+			long end = System.currentTimeMillis();
+			
+			LOGGER.info("Files successfuly processed in " + (end - start) / 1000.0 + " s");
 			
 			System.exit(0);
 		} catch (Exception e) {

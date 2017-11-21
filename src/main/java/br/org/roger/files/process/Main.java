@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
@@ -55,7 +56,9 @@ public class Main {
 		long start = System.currentTimeMillis();
 		
 		Path inputFilesDir = Paths.get(this.appParameter.getInputPath());
-		try (Stream<Path> files = Files.walk(inputFilesDir)) {
+		//try (Stream<Path> files = Files.walk(inputFilesDir)) {
+		try (Stream<Path> files = Files.walk(inputFilesDir).collect(Collectors.toList()).parallelStream()) {
+			//Stream<String> outputLines = files.parallel()
 			Stream<String> outputLines = files
 				.filter(Files::isRegularFile)
 				.map(Path::toFile)
